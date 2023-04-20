@@ -2,13 +2,17 @@
 //
 // Embedded Project Oberon OS
 // Astrobe for RISC5 v8.0
-// CFB Software 
+// CFB Software
 // http://www.astrobe.com
 //
 // Digilent Arty A7
 //
 // CFB 16.10.2021
 //
+// Gray changes:
+// * 2023-04: calltrace feature (search for "gray" to see the changes)
+//
+
 module RISC5Top(
   input CLK100M,
   input [3:0] btn,
@@ -29,8 +33,12 @@ module RISC5Top(
 // 3  RS-232 status / RS-232 control
 // 4  SPI data / SPI data (start)
 // 5  SPI status / SPI control
-// 6  PS2 keyboard (not used)
-// 7  mouse (not used)
+
+// gray begin
+// 6  Calltrace stack data pop & read / push
+// 7  Calltrace control / status
+// gray end
+
 // 8  general-purpose I/O data
 // 9  general-purpose I/O tri-state control
 // 10 I2C Control set
@@ -69,8 +77,20 @@ wire [4:0] i2c_status;
 wire wr_i2c_conset, wr_i2c_data, wr_i2c_conclr;
 reg [15:0] i2c_sclh, i2c_scll;
 
+// gray begin
+// CPU extended
+wire [31:0] cpu_lnkx;       // CPU out: link register
+wire [31:0] cpu_irx;        // CPU out: instruction register
+// Calltrace
+wire [31:0] cts_data_out;   // data output
+wire [31:0] cts_status_out; // tatus output
+wire cts_wr_data;           // write data control signal
+wire cts_rd_data;           // read data control signal
+wire cts_wr_ctrl;           // write control control signal
+// gray end
+
 wire clkfbout, pllclk0, pllclk1;
-wire pllclk2_unused, pllclk3_unused, pllclk4_unused, pllclk5_unused; 
+wire pllclk2_unused, pllclk3_unused, pllclk4_unused, pllclk5_unused;
 wire pll_locked;
 
 PLL_BASE # (
@@ -94,30 +114,60 @@ PLL_BASE # (
 BUFG clk80bufg(.I(pllclk0), .O(clk80));
 BUFG clk40bufg(.I(pllclk1), .O(clk40));
 
-RISC5 riscx(.clk(clk40), .rst(rst), .irq(limit),
-   .rd(rd), .wr(wr), .ben(ben),
-   .adr(adr), .codebus(codebus), .inbus(inbus),
-	.outbus(outbus));
-  
+// gray begin
+// extended CPU
+RISC5_x riscx (
+  .clk(clk40),
+  .rst(rst),
+  .irq(limit),
+  .rd(rd),
+  .wr(wr),
+  .ben(ben),
+  .adr(adr),
+  .codebus(codebus),
+  .inbus(inbus),
+	.outbus(outbus),
+  .lnkx(cpu_lnkx),  // LNK value out
+  .irx(cpu_irx)     // IR value out
+);
+// gray end
+
 PROM PM (.adr(adr[10:2]), .data(romout), .clk(~clk40));
 
 RS232R receiver(.clk(clk40), .rst(rst), .RxD(RxD), .fsel(bitrate),
    .done(doneRx), .data(dataRx), .rdy(rdyRx));
-   
+
 RS232T transmitter(.clk(clk40), .rst(rst), .start(startTx),
    .fsel(bitrate), .data(dataTx), .TxD(TxD), .rdy(rdyTx));
-   
+
 SPI spi(.clk(clk40), .rst(rst), .start(spiStart), .dataTx(outbus),
    .fast(spiCtrl[3]), .wordsize(spiCtrl[4]), .dataRx(spiRx), .rdy(spiRdy),
  	.SCLK(SCLK[0]), .MOSI(MOSI[0]), .MISO(MISO[0] & MISO[1] & MISO[2]));
-  
+
 RAM ram (.clk(clk80), .wr(wr), .be(ben), .adr(adr[18:0]),
    .wdata(outbus), .rdata(inbus0));
-   
+
 I2C i2c(.clk(clk40), .rst(rst), .SDA(SDA), .SCL(SCL), .sclh(i2c_sclh),
    .scll(i2c_scll), .control(i2c_control), .status(i2c_status),
    .data(i2c_data), .wrdata(outbus[7:0]), .wr_conset(wr_i2c_conset),
    .wr_data(wr_i2c_data), .wr_conclr(wr_i2c_conclr));
+
+
+// gray begin: call trace stack
+calltrace calltrace_0 (
+  // in
+  .clk(clk40),
+  .wr_data(cts_wr_data),
+  .wr_ctrl(cts_wr_ctrl),
+  .rd_data(cts_rd_data),
+  .ir_in(cpu_irx[31:0]),
+  .lnk_in(cpu_lnkx[23:0]),
+  .data_in(outbus[23:0]),
+  // out
+  .data_out(cts_data_out[31:0]),
+  .status_out(cts_status_out[31:0])
+);
+// gray end
 
 assign codebus = (adr[23:14] == 10'h3FF) ? romout : inbus0;
 assign iowadr = adr[5:2];
@@ -129,8 +179,10 @@ assign inbus = ~ioenb ? inbus0 :
     (iowadr == 3) ? {30'b0, rdyTx, rdyRx} :
     (iowadr == 4) ? spiRx :
     (iowadr == 5) ? {31'b0, spiRdy} :
-//  (iowadr == 6) ? {3'b0, rdyKbd, dataMs} :
-//  (iowadr == 7) ? {24'b0, dataKbd} :
+    // gray begin
+    (iowadr == 6) ? cts_data_out :    // -40
+    (iowadr == 7) ? cts_status_out :  // -36
+    // gray end
     (iowadr == 8) ? {gpin} :
     (iowadr == 9) ? {gpoc} :
     (iowadr == 10) ? {24'b0, i2c_control} :
@@ -147,6 +199,12 @@ generate // tri-state buffer for gpio port
   end
 endgenerate
 
+// gray begin
+assign cts_wr_data = wr & ioenb & (iowadr == 6);
+assign cts_rd_data = rd & ioenb & (iowadr == 6);
+assign cts_wr_ctrl = wr & ioenb & (iowadr == 7);
+// gray end
+
 assign dataTx = outbus[7:0];
 assign startTx = wr & ioenb & (iowadr == 2);
 assign doneRx = rd & ioenb & (iowadr == 2);
@@ -155,7 +213,7 @@ assign spiStart = wr & ioenb & (iowadr == 4);
 assign SS = ~spiCtrl[2:0];  //active low slave select
 assign MOSI[1] = MOSI[0], SCLK[1] = SCLK[0];
 assign MOSI[2] = MOSI[0], SCLK[2] = SCLK[0];
-assign leds = Lreg; 
+assign leds = Lreg;
 assign wr_i2c_conset = wr & ioenb & (iowadr == 10);
 assign wr_i2c_data = wr & ioenb & (iowadr == 12);
 assign wr_i2c_conclr = wr & ioenb & (iowadr == 15);

@@ -1,20 +1,26 @@
 `timescale 1ns / 1ps  // NW 31.8.2018
 //with interrupt and floating-point
 //
-// Embedded Project Oberon OS 
+// Embedded Project Oberon OS
 // Astrobe for RISC5 v8.0
-// CFB Software 
+// CFB Software
 // https://www.astrobe.com
 //
 // CFB 13.10.2021
 //
+// Gray changes:
+// 2023-04: "pull put" LNK and IR values
+//
 
-module RISC5(
-input clk, rst, irq,
-input [31:0] inbus, codebus,
-output [23:0] adr,
-output rd, wr, ben,
-output [31:0] outbus);
+module RISC5_x (
+   input clk, rst, irq,
+   input [31:0] inbus, codebus,
+   output [23:0] adr,
+   output rd, wr, ben,
+   output [31:0] outbus,
+   output [31:0] lnkx,        // LNK value (reg 15)
+   output [31:0] irx          // IR value
+);
 
 localparam StartAdr = 22'h3FF800;
 
@@ -73,6 +79,15 @@ FPMultiplier fpmulx (.clk(clk), .run(FML), .stall(stallFM),
 FPDivider fpdivx (.clk(clk), .run(FDV), .stall(stallFD),
    .x(B), .y(C0), .z(fquot));
 
+// gray begin
+reg [31:0] LNK;
+always @(posedge clk) begin
+  LNK <= (regwr & (ira0 == 15)) ? regmux : LNK;
+end
+assign lnkx = LNK;
+assign irx = IR;
+// gray end
+
 assign p = IR[31];
 assign q = IR[30];
 assign u = IR[29];
@@ -112,7 +127,7 @@ assign aluRes =
   ~op[3] ?
     (~op[2] ?
       (~op[1] ?
-        (~op[0] ? 
+        (~op[0] ?
           (q ?  // MOV
             (~u ? {{16{v}}, imm} : {imm, 16'b0}) :
             (~u ? C0 : (~v ? H : {N, Z, C, OV, 20'b0, 8'h53}))) :
@@ -152,11 +167,11 @@ assign cond = IR[27] ^
    (cc == 7)); // T, F
 
 assign intAck = intPnd & intEnb & ~intMd & ~stall;
-assign pcmux = ~rst | stall | intAck | RTI ? 
+assign pcmux = ~rst | stall | intAck | RTI ?
       (~rst | stall ? (~rst ? StartAdr : PC) :
       (intAck ? 1 : SPC)) : pcmux0;
-assign pcmux0 = (BR & cond) ? (u? nxpc + disp : (IR[7] ? C0[23:0] + nxpc : C0[23:2])) : nxpc; 
-  
+assign pcmux0 = (BR & cond) ? (u? nxpc + disp : (IR[7] ? C0[23:0] + nxpc : C0[23:2])) : nxpc;
+
 assign sa = aluRes[31];
 assign sb = B[31];
 assign sc = C1[31];
@@ -167,9 +182,9 @@ assign cx = RTI ? SPC[23] :
     ADD ? (~sb&sc&~sa) | (sb&sc&sa) | (sb&~sa) :
 	 SUB ? (~sb&sc&~sa) | (sb&sc&sa) | (~sb&sa) : C;
 assign vv = RTI ? SPC[22] :
-    ADD ? (sa&~sb&~sc) | (~sa&sb&sc): 
+    ADD ? (sa&~sb&~sc) | (~sa&sb&sc):
 	 SUB ? (sa&~sb&sc) | (~sa&sb&~sc) : OV;
-	 
+
 assign stallL0 = (LDR|STR) & ~stallL1;
 assign stall = stallL0 | stallM | stallD | stallFA | stallFM | stallFD;
 
@@ -185,5 +200,5 @@ always @ (posedge clk) begin
   intMd <= rst & ~RTI & (intAck | intMd);
   intEnb <= ~rst ? 0 : (BR & ~u & ~v & IR[5]) ? IR[0] : intEnb;
   SPC <= (intAck) ? {nn, zz, cx, vv, pcmux0} : SPC;
-  end 
-endmodule 
+  end
+endmodule

@@ -1,7 +1,9 @@
 MODULE System; (*JG 3.10.90 / NW 12.10.93 / NW 18.5.2013 / CB 6.11.2016 *)
   (* CFB 28.04.2018 Added RTC. *)
   (* CFB 05.08.2020 Changed date format and validated date *)
-  IMPORT SYSTEM, Kernel, FileDir, Files, Modules, Texts, Oberon, RTC;
+  (* Gray 2023-04 Add Calltrace feature to 'Trap' *)
+
+  IMPORT SYSTEM, Kernel, FileDir, Files, Modules, Texts, Oberon, RTC, CalltraceView;
 
   VAR
     W: Texts.Writer;
@@ -284,7 +286,9 @@ MODULE System; (*JG 3.10.90 / NW 12.10.93 / NW 18.5.2013 / CB 6.11.2016 *)
       WHILE (mod # NIL) & ((u < mod.code) OR (u >= mod.imp)) DO mod := mod.next END ;
       IF mod # NIL THEN Texts.WriteString(W, " in "); Texts.WriteString(W, mod.name) END ;
       Texts.WriteString(W, " at"); Texts.WriteHex(W, u);
-      Texts.WriteLn(W); Oberon.Reset
+      Texts.WriteLn(W);
+      CalltraceView.ShowTrace(-1); (* gray *)
+      Oberon.Reset
     END
   END Trap;
 

@@ -2,7 +2,7 @@ MODULE Oberon;
 (*JG 6.9.90 / 23.9.93 / 13.8.94 *)
 (*NW 14.4.2013 / 22.12.2013 *)
 (*CFB Software 2019-2021*)
-  IMPORT SYSTEM, Texts, Files, Input, Kernel, Modules, Upload;
+  IMPORT SYSTEM, Texts, Files, Input, Kernel, Modules, Upload, Calltrace;
 
   CONST
     off = 0; idle = 1; active = 2;   (*task states*)
@@ -195,7 +195,9 @@ MODULE Oberon;
   PROCEDURE Reset*;
   BEGIN
     IF CurTask.state = active THEN Remove(CurTask) END ;
-    SYSTEM.LDREG(14, Kernel.stackOrg); (*reset stack pointer*) Loop
+    SYSTEM.LDREG(14, Kernel.stackOrg); (*reset stack pointer*)
+    Calltrace.Clear; (* gray *)
+    Loop
   END Reset;
 
 BEGIN
@@ -203,5 +205,6 @@ BEGIN
   NEW(Par.text);
   CurTask := NewTask(GC, 1000); Install(CurTask);
   Modules.Load("System", Mod); Mod := NIL;
+  Calltrace.Clear; (* gray *)
   Loop
 END Oberon.
