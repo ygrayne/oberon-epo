@@ -1,0 +1,25 @@
+## ingnore all
+/*
+
+## really all
+*.*
+
+# add .gitgnore
+!.gitignore
+
+# add dirs
+!/hardware/
+!/oberon/
+
+# ignore Vivado generated files
+/hardware/*/build/*
+
+## add files
+!*.mod
+!*.md
+!*.v
+!*.xdc
+!*.mem
+
+# Vivado project files
+!*.xpr
