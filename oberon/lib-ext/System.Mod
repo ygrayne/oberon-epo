@@ -1,7 +1,7 @@
 MODULE System; (*JG 3.10.90 / NW 12.10.93 / NW 18.5.2013 / CB 6.11.2016 *)
   (* CFB 28.04.2018 Added RTC. *)
   (* CFB 05.08.2020 Changed date format and validated date *)
-  (* Gray 2023-04 Add Calltrace feature to 'Trap' *)
+  (* Gray 2023-04 Add Calltrace feature to 'Trap' (search for "gray")*)
 
   IMPORT SYSTEM, Kernel, FileDir, Files, Modules, Texts, Oberon, RTC, CalltraceView;
 

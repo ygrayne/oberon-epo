@@ -12,14 +12,18 @@ MODULE Calltrace;
     DataAdr = -40;
     StatusAdr = DataAdr + 4;
 
+    (* control bits *)
     ClearCtrl = 1;
     FreezeCtrl = 2;
     UnfreezeCtrl = 4;
 
+    (* status bits *)
     EmptyBit = 0;
     FullBit = 1;
     OverflowBit = 2;
     FrozenBit = 3;
+
+    (* status value ranges *)
     Count0 = 8;
     Count1 = 15;
     MaxCount0 = 16;
@@ -33,6 +37,8 @@ MODULE Calltrace;
 
 
   (* unfrozen stack *)
+  (* care neds to be taken not to contaminate the stack with these procedures *)
+  (* and cause or return false stack values *)
 
   PROCEDURE Freeze*;
     VAR x: INTEGER;
@@ -46,9 +52,9 @@ MODULE Calltrace;
   PROCEDURE Pop*(VAR value: INTEGER);
     VAR x: INTEGER;
   BEGIN
-    SYSTEM.GET(DataAdr, x); (* pop this procedure's entry *)
+    SYSTEM.GET(DataAdr, x);   (* pop this procedure's hw-pushed entry *)
     SYSTEM.GET(DataAdr, value);
-    SYSTEM.PUT(DataAdr, x)  (* push it back *)
+    SYSTEM.PUT(DataAdr, x)    (* push it back *)
   END Pop;
 
 
@@ -81,6 +87,7 @@ MODULE Calltrace;
 
 
   PROCEDURE GetMaxCount*(VAR count: INTEGER);
+  (* the max count including any pushes in the overflow state *)
     VAR x: INTEGER;
   BEGIN
     SYSTEM.GET(DataAdr, x);

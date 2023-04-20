@@ -34,12 +34,14 @@ MODULE CalltraceView;
   END writeTraceLine;
 
 
+  (* 'id' is simply an indicator to differentiate different *)
+  (* calls to ShowTrace, in case the code uder test is instrumented *)
+  (* with more than one. As a "special feature", if 'id' is negative, *)
+  (* the top element gets popped in order not to see the call to ShowTrace *)
+  (* which may or may not be useful. The trap handler uses -1. *)
   PROCEDURE ShowTrace*(id: INTEGER);
     VAR i, x, cnt: INTEGER;
   BEGIN
-    (* Remove call to ShowTrace for negative id's used during error handling. *)
-    (* For non-error calls, it's useful to see where the call was done *)
-    (* in order to see the exact location. *)
     IF id < 0 THEN Calltrace.Pop(x) END;
     Texts.WriteLn(W);
     Texts.WriteString(W, "Calltrace id: "); Texts.WriteInt(W, id, 0); Texts.WriteLn(W);

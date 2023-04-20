@@ -30,7 +30,9 @@
 
   To read the stack data without popping, 'freeze' it, and use 'read'.
   'unfreeze' gets the stack back to the state before the freeze.
-  'push' and 'pop' are not recognised in the frozen state.
+  'push' and 'pop' are not recognised in the frozen state. 'read' always returns
+  the actual contents of the stack, independent of the overflow state. Reading
+  "below" the lower bound of the stack will return the last element, just like 'pop'.
   --
   Note: we're refraining from making the code hard to read using $clog2 etc. everywhere.
   Just don't instantiate more than 128 stack slots :) and don't overflow the stack by

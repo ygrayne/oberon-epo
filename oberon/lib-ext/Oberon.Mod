@@ -2,6 +2,7 @@ MODULE Oberon;
 (*JG 6.9.90 / 23.9.93 / 13.8.94 *)
 (*NW 14.4.2013 / 22.12.2013 *)
 (*CFB Software 2019-2021*)
+(* Gray 2023-04: add Calltrace (search for "gray")*)
   IMPORT SYSTEM, Texts, Files, Input, Kernel, Modules, Upload, Calltrace;
 
   CONST
