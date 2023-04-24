@@ -1,10 +1,11 @@
-MODULE Calltrace;
 (**
   Driver for the calltrace "shadow" stack.
   --
   (c) 2021-2023 Gray gray@grayraven.org
   https://oberon-rts.org/licences
 **)
+
+MODULE Calltrace;
 
   IMPORT SYSTEM;
 

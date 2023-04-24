@@ -20,6 +20,11 @@
 !*.v
 !*.xdc
 !*.mem
+!*.sdc
+!*.qsf
 
 # Vivado project files
 !*.xpr
+
+# Quartus project files
+!*.qpf

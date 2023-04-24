@@ -1,10 +1,11 @@
-MODULE CalltraceView;
 (**
   Print procedure calltrace from calltrace stack.
   --
   (c) 2021-2023 Gray, gray@grayraven.org
   https://oberon-rts.org/licences
 **)
+
+MODULE CalltraceView;
 
   IMPORT Calltrace, Texts, Modules;
 
@@ -34,11 +35,13 @@ MODULE CalltraceView;
   END writeTraceLine;
 
 
-  (* 'id' is simply an indicator to differentiate different *)
-  (* calls to ShowTrace, in case the code uder test is instrumented *)
-  (* with more than one. As a "special feature", if 'id' is negative, *)
-  (* the top element gets popped in order not to see the call to ShowTrace *)
-  (* which may or may not be useful. The trap handler uses -1. *)
+  (*
+  'id' is simply an indicator to differentiate different
+  calls to ShowTrace, in case the code under test is instrumented
+  with more than one. As a "special feature", if 'id' is negative,
+  the top element gets popped in order not to see the call to ShowTrace
+  which may or may not be useful. The trap handler uses -1.
+  *)
   PROCEDURE ShowTrace*(id: INTEGER);
     VAR i, x, cnt: INTEGER;
   BEGIN
