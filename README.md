@@ -5,41 +5,32 @@ See [Embedded Project Oberon](https://astrobe.com/RISC5/ReadMe.htm)
 
 Note the copyrights and most importantly the ALL CAPs disclaimers in the file COPYRIGHT.md and possibly the single source files!
 
-## Directory: oberon
+## Projects and Systems
 
-The Oberon modules.
-
-### lib-base
-
-The baseline Oberon modules.
-
-### lib-ext1
-
-The modules for hardware "ext1" with Calltrace, both changed baseline and new modules.
-
-### demo
-
-Demo programs.
-
-### config
-
-Astrobe IDE config files. They may or may not work your system, depending on the IDE installation and configuration.
-
-
-## Directory: hardware
-
-The Verilog modules or other hardware-sepcific files.
+Each project directory contains all changed and added Oberon and Verilog modules for a specific system, with the original, unchanged ones in 'lib-base'. There's an additional README file inside each directory with further information.
 
 ### lib-base
 
-The baseline Verilog modules.
+The baseline Oberon and Verilog modules.
 
-### arty-a7-100-base: baseline EPO 8.0 (original)
+### arty-a7-100-base
 
-The baseline Embedded Project Oberon platform for Arty A7-100.
+The Verilog modules to build the base Embedded Project Oberon v8.0 system for the Digilent Arty A7-100.
 
-### arty-a7-100-ext1: add Calltrace
+### arty-a7-100-calltrace
 
-The Verilog modules adding the Calltrace feature, both changed baseline and new modules.
+The Oberon and Verilog modules to build the system with the Calltrace feature for the Digilent Arty A7-100.
 
 See [Stack Trace](https://www.astrobe.com/forum/viewtopic.php?f=13&t=747) in the Astrobe forum.
+
+### cv-sk-base (coming soon)
+
+The Verilog modules to build the base Embedded Project Oberon v8.0 system for the Terasic Cyclone V GX Starter Kit.
+
+It runs the stock SD card image file as provided with Astrobe for RISC5.
+
+## Tools
+
+* Astrobe for RISC5: v8.0.0
+* Vivado: version 2022.2
+* Quartus Prime: version 22.1 std Lite Edition

@@ -1,18 +1,22 @@
+# .gitignore file for oberon-epo
+# ------------------------------
+
 ## ingnore all
 /*
-
-## really all
 *.*
 
 # add .gitgnore
 !.gitignore
 
 # add dirs
-!/hardware/
-!/oberon/
+!/lib-base/
+!/arty-a7-100-base/
+!/arty-a7-100-base/hardware/
+!/arty-a7-100-base/oberon/
+!/arty-a7-100-calltrace/
+!/arty-a7-100-calltrace/hardware/
+!/arty-a7-100-calltrace/oberon/
 
-# ignore Vivado generated files
-/hardware/*/build/*
 
 ## add files
 !*.mod
@@ -22,6 +26,7 @@
 !*.mem
 !*.sdc
 !*.qsf
+!*.ini
 
 # Vivado project files
 !*.xpr

@@ -83,7 +83,7 @@ wire [31:0] cpu_lnkx;       // CPU out: link register
 wire [31:0] cpu_irx;        // CPU out: instruction register
 // Calltrace
 wire [31:0] cts_data_out;   // data output
-wire [31:0] cts_status_out; // tatus output
+wire [31:0] cts_status_out; // status output
 wire cts_wr_data;           // write data control signal
 wire cts_rd_data;           // read data control signal
 wire cts_wr_ctrl;           // write control control signal
