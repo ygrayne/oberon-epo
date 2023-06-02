@@ -15,7 +15,7 @@
   'empty' signalling that condition.
 
   Pushing on a full stack will not store anything, obviously, but the stack
-  ensures enforces strict 'one push for each pop' mechanics to ensure the popped
+  enforces strict 'one push for each pop' mechanics to ensure the popped
   data corresponds with the pushes. So pushing on a full stack, when no data is stored,
   must be followed by an equal number of pops, before data is actually removed
   from the top of the stack. Popping an overflowed stack will (repeatedly) return
