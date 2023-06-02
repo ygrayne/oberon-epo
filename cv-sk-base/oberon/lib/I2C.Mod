@@ -67,7 +67,7 @@ CONST
   I2CConSet = -16;    (* write and read I2CONSET *)
 
   (* gray *)
-  ClockFreq = 25000000; (* MHz *)
+  ClockFreq = 38000000; (* MHz *)
 
 
 PROCEDURE GetStatus(VAR status: INTEGER);

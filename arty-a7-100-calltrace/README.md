@@ -4,7 +4,7 @@ The Oberon and Verilog modules for Arty A7-100 with the added Calltrace feature.
 
 See [Stack Trace](https://www.astrobe.com/forum/viewtopic.php?f=13&t=747) in the Astrobe forum.
 
-## hardware
+## fpga
 
 * 'lib': the changed or added Verilog modules
 * 'build': the Vivado project in directory 'build' creates the FPGA config files.

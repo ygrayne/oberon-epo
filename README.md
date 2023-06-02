@@ -23,11 +23,13 @@ The Oberon and Verilog modules to build the system with the Calltrace feature fo
 
 See [Stack Trace](https://www.astrobe.com/forum/viewtopic.php?f=13&t=747) in the Astrobe forum.
 
-### cv-sk-base (coming soon)
+### cv-sk-base
 
 The Verilog modules to build the base Embedded Project Oberon v8.0 system for the Terasic Cyclone V GX Starter Kit.
 
-It runs the stock SD card image file as provided with Astrobe for RISC5.
+It boots the stock SD card image file as provided with Astrobe for RISC5 8.0.
+
+See [Embedded Project Oberon on Altera FPGA](https://www.astrobe.com/forum/viewtopic.php?f=13&t=750) in the Astrobe forum.
 
 ## Tools
 

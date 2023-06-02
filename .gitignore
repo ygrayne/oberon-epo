@@ -8,14 +8,24 @@
 # add .gitgnore
 !.gitignore
 
-# add dirs
+# set dirs
 !/lib-base/
 !/arty-a7-100-base/
-!/arty-a7-100-base/hardware/
+/arty-a7-100-base/fpga/build/*
+!/arty-a7-100-base/fpga/
+
 !/arty-a7-100-base/oberon/
+
 !/arty-a7-100-calltrace/
-!/arty-a7-100-calltrace/hardware/
+!/arty-a7-100-calltrace/fpga/
+/arty-a7-100-calltrace/fpga/build/*
 !/arty-a7-100-calltrace/oberon/
+
+!/cv-sk-base/
+!/cv-sk-base/fpga/
+/cv-sk-base/fpga/build/*
+!/cv-sk-base/oberon/
+!/cv-sk-base/doc/
 
 
 ## add files
@@ -27,6 +37,7 @@
 !*.sdc
 !*.qsf
 !*.ini
+!*.pdf
 
 # Vivado project files
 !*.xpr
